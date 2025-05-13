@@ -1,0 +1,31 @@
+version: "2.0"
+jobs:
+  build:
+    docker:
+      - image: "node:14"
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Build Application
+          command: npm run build
+      - run:
+          name: Run Tests
+          command: npm test
+
+  deploy:
+    docker:
+      - image: "node:14"
+    steps:
+      - checkout
+      - run:
+          name: Deploy to BTP
+          command: |
+            cf login -a https://api.cf.us10-001.hana.ondemand.com -u S0025601642 -p Welcome@123$
+            cf push 12d076b9trial.integrationsuite-trial.cfapps.us10-001.hana.ondemand.com
+
+triggers:
+  - event: push
+    branch: main
